@@ -94,6 +94,15 @@ def verify(rows: list[dict[str, str]], offline: bool) -> list[str]:
             continue
         if not metadata.get("fork"):
             errors.append(f"{label}: {slug} is not marked as a GitHub fork")
+        is_candidate = "candidate-only" in row["selected_fork"].casefold()
+        default_branch = metadata.get("default_branch")
+        if is_candidate and default_branch != "main":
+            errors.append(f"{label}: candidate fork default branch is {default_branch!r}, expected 'main'")
+        if not is_candidate and row["branch"] == "maintained/cpi217" and default_branch != row["branch"]:
+            errors.append(
+                f"{label}: maintained fork default branch is {default_branch!r}, "
+                f"expected {row['branch']!r}"
+            )
         parent = metadata.get("parent") or {}
         parent_slug = parent.get("full_name") if isinstance(parent, dict) else None
         if str(parent_slug).casefold() != row["upstream_slug"].casefold():

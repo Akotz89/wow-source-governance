@@ -1,0 +1,25 @@
+name: Verify source ownership
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "17 4 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Verify manifest shape
+        run: python3 tools/verify_github_source_ownership.py --offline
+      - name: Verify GitHub forks and pins
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/verify_github_source_ownership.py
