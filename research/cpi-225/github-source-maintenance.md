@@ -6,6 +6,7 @@ from build, SQL, runtime, gameplay, rollback, and release acceptance.
 ## Source of truth
 
 - Inventory and disposition: [`canonical-module-manifest.csv`](canonical-module-manifest.csv)
+- Exact owned source pins and patch hashes: [`github-source-delta-ledger.md`](github-source-delta-ledger.md)
 - Live GitHub check: `python3 tools/verify_github_source_ownership.py`
 - Offline manifest check: `python3 tools/verify_github_source_ownership.py --offline`
 

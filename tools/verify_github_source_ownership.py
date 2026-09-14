@@ -15,6 +15,9 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MANIFEST = ROOT / "research/cpi-225/canonical-module-manifest.csv"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 GITHUB_RE = re.compile(r"https://github\.com/([^/\s]+)/([^/\s,)]+)")
+PAIRED_CORE_RE = re.compile(r"paired exact-pinned core\s+([^@\s]+)@([0-9a-f]{40})", re.IGNORECASE)
+PAIRED_CORE_PARENT = "mod-playerbots/azerothcore-wotlk"
+PAIRED_CORE_BRANCH = "maintained/cpi217"
 REQUIRED_FIELDS = {
     "record_kind",
     "module",
@@ -83,9 +86,56 @@ def manifest_rows(path: Path) -> list[dict[str, str]]:
     return rows
 
 
-def verify(rows: list[dict[str, str]], owner: str, offline: bool) -> tuple[list[str], int]:
+def paired_core(rows: list[dict[str, str]]) -> tuple[str, str]:
+    playerbots = next((row for row in rows if row["module"] == "mod-playerbots"), None)
+    if playerbots is None:
+        raise RuntimeError("manifest is missing the mod-playerbots decision")
+    match = PAIRED_CORE_RE.search(playerbots.get("dependencies", ""))
+    if match is None:
+        raise RuntimeError("mod-playerbots: paired exact-pinned core dependency is missing")
+    return match.group(1), match.group(2)
+
+
+def verify_paired_core(core_slug: str, revision: str, owner: str, offline: bool) -> list[str]:
+    errors: list[str] = []
+    if core_slug.split("/", 1)[0].casefold() != owner.casefold():
+        errors.append(f"paired core {core_slug}: expected an {owner}-owned fork")
+    if offline:
+        return errors
+
+    metadata = gh_json(f"repos/{core_slug}")
+    if not isinstance(metadata, dict):
+        return [f"paired core {core_slug}: repository metadata is not an object"]
+    if not metadata.get("fork"):
+        errors.append(f"paired core {core_slug} is not marked as a GitHub fork")
+    parent = metadata.get("parent") or {}
+    parent_slug = parent.get("full_name") if isinstance(parent, dict) else None
+    if str(parent_slug).casefold() != PAIRED_CORE_PARENT.casefold():
+        errors.append(
+            f"paired core {core_slug}: parent is {parent_slug!r}, expected {PAIRED_CORE_PARENT!r}"
+        )
+    if metadata.get("default_branch") != PAIRED_CORE_BRANCH:
+        errors.append(
+            f"paired core {core_slug}: default branch is {metadata.get('default_branch')!r}, "
+            f"expected {PAIRED_CORE_BRANCH!r}"
+        )
+    ref = gh_json(f"repos/{core_slug}/git/ref/heads/{PAIRED_CORE_BRANCH}")
+    actual = ref.get("object", {}).get("sha") if isinstance(ref, dict) else None
+    if actual != revision:
+        errors.append(f"paired core {core_slug}: {PAIRED_CORE_BRANCH} is {actual!r}, expected {revision}")
+    return errors
+
+
+def verify(
+    rows: list[dict[str, str]],
+    owner: str,
+    offline: bool,
+    core_slug: str,
+    core_revision: str,
+) -> tuple[list[str], int]:
     errors: list[str] = []
     owned_count = 0
+    errors.extend(verify_paired_core(core_slug, core_revision, owner, offline))
     for row in rows:
         module = row["module"]
         selected_slug = row["selected_slug"]
@@ -156,7 +206,8 @@ def main() -> int:
 
     try:
         rows = manifest_rows(args.manifest)
-        errors, owned_count = verify(rows, args.owner, args.offline)
+        core_slug, core_revision = paired_core(rows)
+        errors, owned_count = verify(rows, args.owner, args.offline, core_slug, core_revision)
     except (OSError, RuntimeError, json.JSONDecodeError) as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 1
@@ -169,7 +220,7 @@ def main() -> int:
     mode = "offline" if args.offline else "GitHub"
     print(
         f"PASS: {mode} source inventory verified for {len(rows)} module decisions "
-        f"({owned_count} owned forks)"
+        f"({owned_count} owned module forks) plus paired core {core_slug}@{core_revision}"
     )
     return 0
 
