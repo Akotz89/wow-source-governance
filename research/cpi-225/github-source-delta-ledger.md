@@ -97,3 +97,20 @@ These are source identities and focused checks only. They do not establish a
 full native build, deployment, runtime configuration, gameplay, or release
 acceptance. The manifest still represents the historical ten-fork source
 line, not the complete set of public project repositories.
+
+## Paired core and Playerbots workflow update — 2026-10-31
+
+The `maintained/cpi217` branch heads advanced from the dated pins in the table
+above to the following revisions. These updates change workflow files only;
+the C++, SQL and configuration trees are unchanged. The Playerbots manifest
+row and its paired-core dependency use these new exact source identities.
+
+| Component | Current owned branch pin | SHA-256 of `git diff --binary` from the table's live base to this pin | Changed paths since the previous pin |
+| --- | --- | --- | --- |
+| Core | `781cae77bde59dca22a52beb312b806acf05fde7` | `834ae22a08f1a631ba5e8e9f7ddc0d20033411cb28eda69a05676eda432745e2` | `.github/workflows/repository-hygiene.yml` |
+| Playerbots | `cb720040b762d27311139f5c7d4a52c3d5139b63` | `4eecd017422638423ffbce367564e6bd89719e91f66d8c2a362efe2adfac94e7` | `.github/workflows/repository-hygiene.yml`, `.github/workflows/codestyle_cpp.yml` |
+
+The new checks passed on the corresponding pull requests and inspect source
+paths and whitespace only. They do not compile WoW or establish native build,
+runtime, gameplay, or release acceptance. Historical release evidence above is
+unchanged.
