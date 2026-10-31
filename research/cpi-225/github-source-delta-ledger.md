@@ -89,9 +89,11 @@ remain unchanged.
 
 | Component | Current owned branch pin | SHA-256 of `git diff --binary` from the table's live base to this pin | Source-only observation |
 | --- | --- | --- | --- |
-| Game State API | `f46f340e70be952c4fd347a88d341929edcf214d` | `5601ea8a50babdfbc136a6b80cdb3ec351dc526b252753b954de6702b63af100` | Authenticated API source and bounded-worker handling; exact-head GitHub source-contract checks passed. |
+| Game State API | `726a1de66f6149204cfd04f25fd93a41d8081227` | `bfe97b74902f9276119d4b35c9e0a7618c03d01ee07a283fcfb0633bf902c3d9` | Authenticated API source and bounded-worker handling; exact-head GitHub source-contract checks passed. |
 | Rotation | `c2b8fb766d3b8c67552835d78577baaa674c77ac` | `08b712f979e267fa80a73d8bbe95b51e8551ce10d83943dbb577745aec4140cb` | Autolearn defaults off and casts use active-spell checks; guarded WSL fixture passed. |
 | Weather Vibe | `362a134c6b129aa160ef959c1e20aef8121c52f3` | `632a414fd1b86a036a7d7c85393a713c41539480d4d8d07e5896c6fa5072ae4d` | Fine-weather intensity handling and non-finite range validation changed; guarded WSL fixture passed. |
+
+The previous Game State API head was `f46f340e70be952c4fd347a88d341929edcf214d`; its source-diff SHA-256 was `5601ea8a50babdfbc136a6b80cdb3ec351dc526b252753b954de6702b63af100`. The current head adds the maintained-core fixture path and passed the guarded native fixture.
 
 These are source identities and focused checks only. They do not establish a
 full native build, deployment, runtime configuration, gameplay, or release
