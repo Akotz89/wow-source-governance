@@ -15,20 +15,27 @@ revision, license scope, local-delta owner, disposition, and remaining gate.
 No module becomes release authority merely because a directory or GitHub
 repository exists.
 
-## Current GitHub layout
+## Historical GitHub layout — 2026-09-14
+
+The following was the source layout at the original audit. It is retained for
+historical context, not as a claim about the current set of forks or branches.
 
 - The ten maintained source-line repositories use the stable
   `maintained/cpi217` branch and that branch is the default branch on GitHub.
 - `mod-junk-to-gold-plus` remains candidate-only on
   `codex/candidate-cpi225-junk-to-gold-party-white-20260913`; it was not
   promoted to the maintained line.
-- `wow-population-controller` remains a private repository and contains only
+- `wow-population-controller` was a private repository and contained only
   source-only Python; credentials, database data, server configuration,
   release artifacts, and login automation are excluded.
 - Direct-upstream and private-home-use components remain represented in the
   manifest without being copied into a public fork; a source fork for a
   removed, deferred, or compiled-disabled component does not change that
   release disposition.
+
+As of 2026-10-31, `Akotz89/wow-population-controller` is public. Its current
+source and protection settings must be checked directly on GitHub; this fact
+does not establish that its code is built, deployed, or accepted at runtime.
 
 ## Maintenance rule
 

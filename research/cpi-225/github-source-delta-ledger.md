@@ -77,3 +77,23 @@ source-line rows. The public governance repository publishes this ledger with
 the manifest, maintenance policy, and verifier. This remains source-only
 ownership evidence; it is not build, runtime, gameplay, rollback, or release
 acceptance.
+
+## Maintained fork head reconciliation — 2026-10-31
+
+The following source heads supersede only the owned-branch pins in the dated
+table above. Each descends from its recorded 2026-09-14 pin. The original table,
+its patch hashes, and the manifest's historical inventory and runtime-posture
+evidence describe that earlier snapshot; they are not claims about deployment
+of these later revisions. The manifest's deferred/removed release dispositions
+remain unchanged.
+
+| Component | Current owned branch pin | SHA-256 of `git diff --binary` from the table's live base to this pin | Source-only observation |
+| --- | --- | --- | --- |
+| Game State API | `f46f340e70be952c4fd347a88d341929edcf214d` | `5601ea8a50babdfbc136a6b80cdb3ec351dc526b252753b954de6702b63af100` | Authenticated API source and bounded-worker handling; exact-head GitHub source-contract checks passed. |
+| Rotation | `c2b8fb766d3b8c67552835d78577baaa674c77ac` | `08b712f979e267fa80a73d8bbe95b51e8551ce10d83943dbb577745aec4140cb` | Autolearn defaults off and casts use active-spell checks; guarded WSL fixture passed. |
+| Weather Vibe | `362a134c6b129aa160ef959c1e20aef8121c52f3` | `632a414fd1b86a036a7d7c85393a713c41539480d4d8d07e5896c6fa5072ae4d` | Fine-weather intensity handling and non-finite range validation changed; guarded WSL fixture passed. |
+
+These are source identities and focused checks only. They do not establish a
+full native build, deployment, runtime configuration, gameplay, or release
+acceptance. The manifest still represents the historical ten-fork source
+line, not the complete set of public project repositories.
